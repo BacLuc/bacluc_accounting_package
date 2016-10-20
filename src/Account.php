@@ -84,7 +84,7 @@ class Account extends BaseEntity
     const TYPE_OTHER = 'other';
     const TYPE_RECIEVABLE = 'recievable';
     const TYPE_PAYABLE = 'payable';
-    const TYPE_liquidity = 'liquidity';
+    const TYPE_LIQUIDITY = 'liquidity';
 
     public function __construct(){
         parent::__construct();
