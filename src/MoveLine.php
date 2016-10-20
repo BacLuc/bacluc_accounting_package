@@ -31,17 +31,17 @@ use Concrete\Package\BasicTablePackage\Src\DiscriminatorEntry\DiscriminatorEntry
 use Doctrine\ORM\Mapping\Table;
 
 /**
- * Class Account
+ * Class MoveLine
  * Package  Concrete\Package\BaclucAccountingPackage\Src
  *  @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\Account")
+ * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\Move")
  * @Entity
-@Table(name="bacluc_account"
+@Table(name="bacluc_move_line"
 )
  *
  */
-class Account extends BaseEntity
+class MoveLine extends BaseEntity
 {
     use EntityGetterSetter;
     /**
@@ -52,19 +52,9 @@ class Account extends BaseEntity
     protected $id;
 
     /**
-     * @Column(type="string")
+     * @Column(type="float")
      */
-    protected $code;
-
-    /**
-     * @Column(type="string")
-     */
-    protected $name;
-
-    /**
-     * @Column(type="string")
-     */
-    protected $type;
+    protected $debit;
 
     /**
      * @Column(type="float")
@@ -74,49 +64,43 @@ class Account extends BaseEntity
     /**
      * @Column(type="float")
      */
-    protected $debit;
-
-    /**
-     * @Column(type="float")
-     */
     protected $balance;
 
     /**
-     * @var MoveLine[]
-     * @OneToMany(targetEntity="Concrete\Package\BaclucAccountingPackage\Src\MoveLine", mappedBy="Account")
+     * @Column(type="boolean")
      */
-    protected $MoveLines;
+    protected $reconciled;
 
-    const TYPE_OTHER = 'other';
-    const TYPE_RECIEVABLE = 'recievable';
-    const TYPE_PAYABLE = 'payable';
-    const TYPE_LIQUIDITY = 'liquidity';
+    /**
+     * @Column(type="date")
+     */
+    protected $date_posted;
+
+    /**
+     * @var Account
+     * @ManyToOne(targetEntity="Concrete\Package\BaclucAccountingPackage\Src\Account" ,inversedBy="MoveLines")
+     */
+    protected $Account;
+
+
+    /**
+     * @var Move
+     * @ManyToOne(targetEntity="Concrete\Package\BaclucAccountingPackage\Src\Move" ,inversedBy="MoveLines")
+     */
+    protected $Move;
+
 
     public function __construct(){
         parent::__construct();
 
-
-
-        if($this->MoveLines == null){
-            $this->MoveLines = new ArrayCollection();
-        }
         $this->setDefaultFieldTypes();
     }
     public function setDefaultFieldTypes(){
         parent::setDefaultFieldTypes();
-        $this->fieldTypes['type']=new DropdownField('type', 'Type', 'posttype');
-        $refl = new \ReflectionClass($this);
-        $constants = $refl->getConstants();
-        $userConstants = array();
-        foreach($constants as $key => $value){
-            $userConstants[$value]=$value;
-        }
         /**
-         * @var DropdownField
+         * @var Field[] $this->FieldTypes
          */
-        $this->fieldTypes['type']->setOptions($userConstants);
-
-
+        $this->fieldTypes['Move']->setShowInForm(false);
 
     }
 
@@ -126,17 +110,8 @@ class Account extends BaseEntity
      * @return \Closure
      */
     public static function getDefaultGetDisplayStringFunction(){
-        $function = function(Account $item){
+        $function = function(MoveLine $item){
             $returnString = '';
-            if(strlen($item->code) >0){
-                $returnString.= $item->code." ";
-            }
-            if(strlen($item->name) >0){
-                $returnString.= $item->name." ";
-            }
-            if(strlen($item->balance) !=0){
-                $returnString.= $item->balance." ";
-            }
             return $returnString;
         };
         return $function;

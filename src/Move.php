@@ -10,6 +10,7 @@ use Concrete\Package\BasicTablePackage\Src\BaseEntity;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DirectEditAssociatedEntityField;
+use Concrete\Package\BasicTablePackage\Src\FieldTypes\DirectEditAssociatedEntityMultipleField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\FileField as FileField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\WysiwygField as WysiwygField;
@@ -31,17 +32,17 @@ use Concrete\Package\BasicTablePackage\Src\DiscriminatorEntry\DiscriminatorEntry
 use Doctrine\ORM\Mapping\Table;
 
 /**
- * Class Account
+ * Class MoveLine
  * Package  Concrete\Package\BaclucAccountingPackage\Src
  *  @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\Account")
+ * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\MoveLine")
  * @Entity
-@Table(name="bacluc_account"
+@Table(name="bacluc_move"
 )
  *
  */
-class Account extends BaseEntity
+class Move extends BaseEntity
 {
     use EntityGetterSetter;
     /**
@@ -54,57 +55,42 @@ class Account extends BaseEntity
     /**
      * @Column(type="string")
      */
-    protected $code;
-
-    /**
-     * @Column(type="string")
-     */
     protected $name;
 
     /**
      * @Column(type="string")
      */
-    protected $type;
+    protected $reference;
 
     /**
-     * @Column(type="float")
+     * @Column(type="string")
      */
-    protected $credit;
+    protected $status;
 
     /**
-     * @Column(type="float")
+     * @Column(type="date")
      */
-    protected $debit;
-
-    /**
-     * @Column(type="float")
-     */
-    protected $balance;
+    protected $date_posted;
 
     /**
      * @var MoveLine[]
-     * @OneToMany(targetEntity="Concrete\Package\BaclucAccountingPackage\Src\MoveLine", mappedBy="Account")
+     * @OneToMany(targetEntity="Concrete\Package\BaclucAccountingPackage\Src\MoveLine", mappedBy="Move")
      */
     protected $MoveLines;
 
-    const TYPE_OTHER = 'other';
-    const TYPE_RECIEVABLE = 'recievable';
-    const TYPE_PAYABLE = 'payable';
-    const TYPE_LIQUIDITY = 'liquidity';
+
+
+    const STATUS_DRAFT = 'draft';
+    const STATUS_POSTED = 'posted';
 
     public function __construct(){
         parent::__construct();
 
-
-
-        if($this->MoveLines == null){
-            $this->MoveLines = new ArrayCollection();
-        }
         $this->setDefaultFieldTypes();
     }
     public function setDefaultFieldTypes(){
         parent::setDefaultFieldTypes();
-        $this->fieldTypes['type']=new DropdownField('type', 'Type', 'posttype');
+        $this->fieldTypes['status']=new DropdownField('status', 'Status', 'poststatus');
         $refl = new \ReflectionClass($this);
         $constants = $refl->getConstants();
         $userConstants = array();
@@ -114,9 +100,13 @@ class Account extends BaseEntity
         /**
          * @var DropdownField
          */
-        $this->fieldTypes['type']->setOptions($userConstants);
+        $this->fieldTypes['status']->setOptions($userConstants);
 
 
+        $MoveLines = $this->fieldTypes['MoveLines'];
+        $directEditField = new DirectEditAssociatedEntityMultipleField($MoveLines->getSQLFieldName(), "Move Lines", $MoveLines->getPostName());
+        DropdownLinkField::copyLinkInfo($MoveLines,$directEditField);
+        $this->fieldTypes['MoveLines']=$directEditField;
 
     }
 
@@ -126,17 +116,8 @@ class Account extends BaseEntity
      * @return \Closure
      */
     public static function getDefaultGetDisplayStringFunction(){
-        $function = function(Account $item){
+        $function = function(Move $item){
             $returnString = '';
-            if(strlen($item->code) >0){
-                $returnString.= $item->code." ";
-            }
-            if(strlen($item->name) >0){
-                $returnString.= $item->name." ";
-            }
-            if(strlen($item->balance) !=0){
-                $returnString.= $item->balance." ";
-            }
             return $returnString;
         };
         return $function;

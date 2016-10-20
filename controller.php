@@ -70,6 +70,7 @@ class Controller extends Package
                 BlockTypeSet::add('bacluc_accounting_set', 'Accounting', $pkg);
             }
             BlockType::installBlockType("bacluc_account_block", $pkg);
+            BlockType::installBlockType("bacluc_move_block", $pkg);
             $em->getConnection()->commit();
         }catch(Exception $e){
             $em->getConnection()->rollBack();
