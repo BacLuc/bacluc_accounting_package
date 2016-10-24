@@ -21,6 +21,7 @@ use Doctrine\ORM\Query\Expr;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownLinkField;
 use Concrete\Package\BaclucPersonPackage\Src\Address;
 use Concrete\Package\BaclucPersonPackage\Src\PostalAddress;
+use Concrete\Package\BasicTablePackage\Src\Exceptions\ConsistencyCheckException;
 
 
 /*because of the hack with @DiscriminatorEntry Annotation, all Doctrine Annotations need to be
@@ -124,6 +125,46 @@ class Move extends BaseEntity
             return $returnString;
         };
         return $function;
+    }
+
+    public function checkConsistency()
+    {
+       //first check movelines
+        $errors = array();
+
+        if($this->checkingConsistency){
+            throw new ConsistencyCheckException();
+        }
+        $this->checkingConsistency = true;
+        $moveLines = $this->MoveLines;
+        $totalCredit = 0;
+        $totalDebit = 0;
+        /**
+         * @var MoveLine $moveLine
+         */
+        foreach($moveLines as $moveLine){
+
+            $moveLine = BaseEntity::getBaseEntityFromProxy($moveLine);
+            try {
+                $moveLineErrors = $moveLine->checkConsistency();
+            }catch (ConsistencyCheckException $e){
+
+            }
+             if(count($moveLineErrors)>0){
+                foreach($moveLineErrors as $error){
+                    $errors[]=$error;
+                }
+            }
+
+            $totalCredit +=$moveLine->credit;
+            $totalDebit += $moveLine->debit;
+        }
+
+        if($totalCredit != $totalDebit){
+            $errors[]="The total debit and total credit of a move must be balanced.";
+        }
+        $this->checkingConsistency = false;
+        return $errors;
     }
 
 }

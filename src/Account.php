@@ -6,8 +6,10 @@
  * Time: 23:08
  */
 namespace Concrete\Package\BaclucAccountingPackage\Src;
+use Concrete\Core\Html\Object\Collection;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
+use Concrete\Package\BasicTablePackage\Src\Exceptions\ConsistencyCheckException;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DirectEditAssociatedEntityField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownField;
@@ -16,6 +18,7 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\WysiwygField as WysiwygFie
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Expr\Expression;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Query\Expr;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownLinkField;
 use Concrete\Package\BaclucPersonPackage\Src\Address;
@@ -104,6 +107,11 @@ class Account extends BaseEntity
     }
     public function setDefaultFieldTypes(){
         parent::setDefaultFieldTypes();
+
+        $this->fieldTypes['debit']->setShowInForm(false);
+        $this->fieldTypes['credit']->setShowInForm(false);
+        $this->fieldTypes['balance']->setShowInForm(false);
+
         $this->fieldTypes['type']=new DropdownField('type', 'Type', 'posttype');
         $refl = new \ReflectionClass($this);
         $constants = $refl->getConstants();
@@ -115,6 +123,9 @@ class Account extends BaseEntity
          * @var DropdownField
          */
         $this->fieldTypes['type']->setOptions($userConstants);
+
+
+
 
 
 
@@ -141,6 +152,54 @@ class Account extends BaseEntity
             return $returnString;
         };
         return $function;
+    }
+
+
+    public function checkConsistency()
+    {
+        $errors = array();
+        if($this->checkingConsistency){
+            throw new ConsistencyCheckException();
+        }
+        $this->checkingConsistency = true;
+        $totalDebit = 0;
+        $totalCredit = 0;
+        $totalBalance = 0;
+        if(count($this->MoveLines)==0){
+
+        }else{
+            foreach($this->MoveLines->toArray() as &$MoveLine){
+                $classname = get_class($MoveLine);
+                $MoveLine = $classname::getBaseEntityFromProxy($MoveLine);
+                /**
+                 * @var MoveLine $MoveLine
+                 */
+                try{
+                    $movelineErrors = $MoveLine->checkConsistency();
+                    foreach($movelineErrors as $key => $value){
+                        $errors[]=$value;
+                    }
+                }catch (ConsistencyCheckException $e){
+
+                }
+
+                $totalCredit += $MoveLine->credit;
+                $totalDebit += $MoveLine->debit;
+                $totalBalance += $MoveLine->balance;
+
+            }
+        }
+
+        if($totalBalance != $totalDebit - $totalCredit){
+            $errors[] = "The difference of totalDebit and totalCredit does not correspond to the sum of totalBalance.";
+        }
+
+        $this->credit = $totalCredit;
+        $this->debit = $totalDebit;
+        $this->balance = $totalBalance;
+
+        $this->checkingConsistency = false;
+        return $errors;
     }
 
 }

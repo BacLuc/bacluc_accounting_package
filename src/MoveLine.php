@@ -9,6 +9,7 @@ namespace Concrete\Package\BaclucAccountingPackage\Src;
 use Concrete\Package\BaclucAccountingPackage\Src\EntityViews\MoveLineFormView;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
+use Concrete\Package\BasicTablePackage\Src\Exceptions\ConsistencyCheckException;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DirectEditAssociatedEntityField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownField;
@@ -145,6 +146,51 @@ class MoveLine extends BaseEntity
             return $returnString;
         };
         return $function;
+    }
+
+
+    public function checkConsistency()
+    {
+        $errors = array();
+        if($this->checkingConsistency){
+            throw new ConsistencyCheckException();
+        }
+        $this->checkingConsistency = true;
+
+        if(is_null($this->Account)){
+            $errors[]="Account can not be null";
+        }else{
+            try{
+                $this->Account = static::getBaseEntityFromProxy($this->Account);
+                $accountErrors = $this->Account->checkConsistency();
+                foreach($accountErrors as $key => $value){
+                    $errors[]=$value;
+                }
+            }catch (ConsistencyCheckException $e){
+
+            }
+        }
+
+        if(is_null($this->Move)){
+            $errors[]="Account can not be null";
+        }else{
+            try{
+                $this->Move = static::getBaseEntityFromProxy($this->Move);
+                $moveErrors = $this->Move->checkConsistency();
+                foreach($moveErrors as $key => $value){
+                    $errors[]=$value;
+                }
+            }catch (ConsistencyCheckException $e){
+
+            }
+        }
+
+        $this->balance = $this->debit - $this->credit;
+
+
+
+        $this->checkingConsistency = false;
+        return $errors;
     }
 
 }
