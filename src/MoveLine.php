@@ -16,6 +16,7 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\FileField as FileField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\WysiwygField as WysiwygField;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Expr\Expression;
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Query\Expr;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownLinkField;
@@ -30,6 +31,7 @@ use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Concrete\Package\BasicTablePackage\Src\DiscriminatorEntry\DiscriminatorEntry;
 use Doctrine\ORM\Mapping\Table;
+use Concrete\Core\Package\Package;
 
 /**
  * Class MoveLine
@@ -119,6 +121,27 @@ class MoveLine extends BaseEntity
     public static function getDefaultGetDisplayStringFunction(){
         $function = function(MoveLine $item){
             $returnString = '';
+            if(is_object($item->Account)){
+                if($item->Account instanceof \Doctrine\ORM\Proxy\Proxy){
+
+                    $item->Account = Package::getByHandle("basic_table_package")
+                        ->getEntityManager()
+                        ->getRepository(get_class($item->Account))
+                        ->findOneBy(array('id'=>2));
+                }
+                $accountDisplayStringFunction = Account::getDefaultGetDisplayStringFunction();
+                $returnString.= $accountDisplayStringFunction($item->Account)." ";
+            }
+            $fieldTypes = $item->getFieldTypes();
+
+            if(strlen($item->credit) >0){
+
+                $returnString.= $fieldTypes['credit']->getLabel().": ".$item->credit." ";
+            }
+            if(strlen($item->debit) >0){
+
+                $returnString.= $fieldTypes['debit']->getLabel().": ".$item->debit." ";
+            }
             return $returnString;
         };
         return $function;

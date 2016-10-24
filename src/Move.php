@@ -118,6 +118,9 @@ class Move extends BaseEntity
     public static function getDefaultGetDisplayStringFunction(){
         $function = function(Move $item){
             $returnString = '';
+            if(strlen($item->name) >0){
+                $returnString.= $item->name." ";
+            }
             return $returnString;
         };
         return $function;
