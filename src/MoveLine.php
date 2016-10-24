@@ -121,14 +121,14 @@ class MoveLine extends BaseEntity
     public static function getDefaultGetDisplayStringFunction(){
         $function = function(MoveLine $item){
             $returnString = '';
-            if(is_object($item->Account)){
-                if($item->Account instanceof \Doctrine\ORM\Proxy\Proxy){
 
-                    $item->Account = Package::getByHandle("basic_table_package")
-                        ->getEntityManager()
-                        ->getRepository(get_class($item->Account))
-                        ->findOneBy(array('id'=>2));
-                }
+            if(strlen($item->id) >0){
+
+                $returnString.= $item->id." ";
+            }
+
+            if(is_object($item->Account)){
+                $item->Account = BaseEntity::getBaseEntityFromProxy($item->Account);
                 $accountDisplayStringFunction = Account::getDefaultGetDisplayStringFunction();
                 $returnString.= $accountDisplayStringFunction($item->Account)." ";
             }

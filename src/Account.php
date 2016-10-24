@@ -127,6 +127,7 @@ class Account extends BaseEntity
      */
     public static function getDefaultGetDisplayStringFunction(){
         $function = function(Account $item){
+            $item = BaseEntity::getBaseEntityFromProxy($item);
             $returnString = '';
             if(strlen($item->code) >0){
                 $returnString.= $item->code." ";
