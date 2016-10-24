@@ -6,6 +6,7 @@
  * Time: 23:08
  */
 namespace Concrete\Package\BaclucAccountingPackage\Src;
+use Concrete\Package\BaclucAccountingPackage\Src\EntityViews\MoveLineFormView;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
@@ -95,6 +96,12 @@ class MoveLine extends BaseEntity
 
         $this->setDefaultFieldTypes();
     }
+
+    public function setDefaultFormViews()
+    {
+        $this->defaultFormView = new MoveLineFormView($this);
+    }
+
     public function setDefaultFieldTypes(){
         parent::setDefaultFieldTypes();
         /**
