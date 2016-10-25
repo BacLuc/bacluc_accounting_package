@@ -190,7 +190,7 @@ class Account extends BaseEntity
             }
         }
 
-        if($totalBalance != $totalDebit - $totalCredit){
+        if(abs($totalBalance -( $totalDebit - $totalCredit)) > 10e-5){
             $errors[] = "The difference of totalDebit and totalCredit does not correspond to the sum of totalBalance.";
         }
 

@@ -161,7 +161,7 @@ class Move extends BaseEntity
                 $totalDebit += $moveLine->debit;
             }
         }
-        if($totalCredit != $totalDebit){
+        if(abs($totalCredit  - $totalDebit)>10e-5){
             $errors[]="The total debit and total credit of a move must be balanced.";
         }
 
