@@ -6,6 +6,7 @@
  * Time: 23:08
  */
 namespace Concrete\Package\BaclucAccountingPackage\Src;
+use Concrete\Flysystem\Exception;
 use Concrete\Package\BaclucAccountingPackage\Src\EntityViews\MoveLineFormView;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
@@ -158,7 +159,7 @@ class MoveLine extends BaseEntity
         $this->checkingConsistency = true;
 
         if(is_null($this->Account)){
-            $errors[]="Account can not be null";
+            //$errors[]="Account can not be null";
         }else{
             try{
                 $this->Account = static::getBaseEntityFromProxy($this->Account);
@@ -172,7 +173,7 @@ class MoveLine extends BaseEntity
         }
 
         if(is_null($this->Move)){
-            $errors[]="Account can not be null";
+            //$errors[]="Move can not be null";
         }else{
             try{
                 $this->Move = static::getBaseEntityFromProxy($this->Move);
@@ -189,8 +190,21 @@ class MoveLine extends BaseEntity
 
 
 
+
+        $this->getEntityManager()->persist($this);
         $this->checkingConsistency = false;
         return $errors;
+    }
+
+    public function set($name, $value)
+    {
+        if($name == "Account" && $this->Account !=null){
+            $this->Account->checkConsistency();
+        }
+        if($name == "Move" && $this->Move != null){
+
+        }
+        return parent::set($name,$value);
     }
 
 }

@@ -199,6 +199,8 @@ class Account extends BaseEntity
         $this->balance = $totalBalance;
 
         $this->checkingConsistency = false;
+         $this->getEntityManager()->persist($this);
+
         return $errors;
     }
 

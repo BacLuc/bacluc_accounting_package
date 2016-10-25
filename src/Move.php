@@ -136,33 +136,37 @@ class Move extends BaseEntity
             throw new ConsistencyCheckException();
         }
         $this->checkingConsistency = true;
-        $moveLines = $this->MoveLines;
+
         $totalCredit = 0;
         $totalDebit = 0;
         /**
          * @var MoveLine $moveLine
          */
-        foreach($moveLines as $moveLine){
+        if(count($this->MoveLines)>0) {
+            foreach ($this->MoveLines->toArray() as $moveLine) {
 
-            $moveLine = BaseEntity::getBaseEntityFromProxy($moveLine);
-            try {
-                $moveLineErrors = $moveLine->checkConsistency();
-            }catch (ConsistencyCheckException $e){
+                $moveLine = BaseEntity::getBaseEntityFromProxy($moveLine);
+                try {
+                    $moveLineErrors = $moveLine->checkConsistency();
+                } catch (ConsistencyCheckException $e) {
 
-            }
-             if(count($moveLineErrors)>0){
-                foreach($moveLineErrors as $error){
-                    $errors[]=$error;
                 }
+                if (count($moveLineErrors) > 0) {
+                    foreach ($moveLineErrors as $error) {
+                        $errors[] = $error;
+                    }
+                }
+
+                $totalCredit += $moveLine->credit;
+                $totalDebit += $moveLine->debit;
             }
-
-            $totalCredit +=$moveLine->credit;
-            $totalDebit += $moveLine->debit;
         }
-
         if($totalCredit != $totalDebit){
             $errors[]="The total debit and total credit of a move must be balanced.";
         }
+
+
+        $this->getEntityManager()->persist($this);
         $this->checkingConsistency = false;
         return $errors;
     }
