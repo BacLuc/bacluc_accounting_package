@@ -2,6 +2,7 @@
 namespace Concrete\Package\BaclucAccountingPackage\Src\BlockOptions;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
+use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Mapping\Table;
 use Concrete\Package\BasicTablePackage\Src\Group as Group;
 use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
@@ -27,9 +28,10 @@ class AccountRefOption extends TableBlockOption{
      * @Column(type="string")
      */
     protected $optionType =__CLASS__;
+
     /**
-     * @var ArrayCollection of Group
-     * @OneToMany(targetEntity="Concrete\Package\BasicAccountingPackage\Src\Account")
+     * var ArrayCollection of Group
+     * ManyToOne(targetEntity="Concrete\Package\BasicAccountingPackage\Src\Account")
 
      */
     protected $AccountAssociations;
