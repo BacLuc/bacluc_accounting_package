@@ -49,7 +49,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
      * set blocktypeset
      * @var string
      */
-    protected $btDefaultSet = 'bacluc_account_set';
+    protected $btDefaultSet = 'bacluc_accounting_set';
 
     /**
      *
