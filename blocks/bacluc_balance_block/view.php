@@ -51,30 +51,32 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
                 $total = 0;
                 if(count($debitors)>0){
                     foreach($debitors as $name => $amount){
+                        $total += $amount;
+                        $amount = number_format($amount,2);
                         print(" 
                         <div class='row'>
-                            <div class='col-xs-12 col-sm-6 '>
+                            <div class='col-xs-6 '>
                                 <span class='accountname'>$name</span>
                             </div>
-                            <div class='col-xs-12 col-sm-6 '>
-                                <span class='accountvalue'>$amount</span>
+                            <div class='col-xs-6 '>
+                                <span class='accountvalue number'>$amount</span>
                             </div>
                             
                         </div>
                         ");
 
-                        $total += $amount;
+
                     }
                 }
 
                 ?>
 
                 <div class="row total-row">
-                    <div class='col-xs-12 col-sm-6 total-name-cell'>
+                    <div class='col-xs-6 total-name-cell'>
                         <span class='total total-name'><?php echo t("Total Debitors") ?></span>
                     </div>
-                    <div class='col-xs-12 col-sm-6 total-amount-cell'>
-                        <span class='total total-amount'><?php echo $total ?></span>
+                    <div class='col-xs-6 total-amount-cell'>
+                        <span class='total total-amount number'><?php echo number_format($total,2); ?></span>
                     </div>
 
 
@@ -99,30 +101,31 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
                 $total = 0;
                 if(count($creditors)>0){
                     foreach($creditors as $name => $amount){
+                        $total += $amount;
+                        $amount = number_format($amount,2);
                         print(" 
                         <div class='row'>
-                            <div class='col-xs-12 col-sm-6 '>
+                            <div class='col-xs-6 '>
                                 <span class='accountname'>$name</span>
                             </div>
-                            <div class='col-xs-12 col-sm-6 '>
-                                <span class='accountvalue'>$amount</span>
+                            <div class='col-xs-6 '>
+                                <span class='accountvalue number'>$amount</span>
                             </div>
                             
                         </div>
                         ");
 
-                        $total += $amount;
                     }
                 }
 
                 ?>
 
                 <div class="row total-row">
-                    <div class='col-xs-12 col-sm-6 total-name-cell'>
+                    <div class='col-xs-6 total-name-cell'>
                         <span class='total total-name'><?php echo t("Total Creditors") ?></span>
                     </div>
-                    <div class='col-xs-12 col-sm-6 total-amount-cell'>
-                        <span class='total total-amount'><?php echo $total ?></span>
+                    <div class='col-xs-6 total-amount-cell'>
+                        <span class='total total-amount number'><?php echo number_format($total,2); ?></span>
                     </div>
 
 

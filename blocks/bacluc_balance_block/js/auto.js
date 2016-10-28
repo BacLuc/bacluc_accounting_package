@@ -1,25 +1,21 @@
 (function($){
 
     function adaptTotalRow(){
-        if($(".creditors").offset().y ==$(".debitors").offset().y){
+        if($(".bacluc-balance-block .creditors").offset().top ==$(".bacluc-balance-block .debitors").offset().top){
 
-            var tochange = $(".creditors");
-            if(tochange.height()>$('.debitors').height()){
+            var tochange = $(".bacluc-balance-block .creditors");
+            if(tochange.height()>$('.bacluc-balance-block .debitors').height()){
                 //fix height of creditors
                 tochange.height(tochange.height());
 
                 //now change the tochange
-                tochange = $('.creditors');
+                tochange = $('.bacluc-balance-block .creditors');
             }else{
                 //fix debitors height
-                $('.debitors').height($('.debitors').height());
-                tochange.height($('.debitors').height());
+                $('.bacluc-balance-block .debitors').height($('.bacluc-balance-block .debitors').height());
+                tochange.height($('.bacluc-balance-block .debitors').height());
             }
-            tochange.find(".total-row").css({
-                position:"absolute",
-                width: "100%",
-                bottom:0
-            });
+            tochange.find(".total-row").addClass("absolute-total");
 
             /*
              .creditors .total-row {
@@ -28,6 +24,10 @@
              width: 100%;
              }
              */
+        }else{
+            $('.bacluc-balance-block .creditors,.bacluc-balance-block .debitors')
+                .removeAttr("style")
+                .find(".total-row").removeClass("absolute-total");
         }
     }
     $(adaptTotalRow);
