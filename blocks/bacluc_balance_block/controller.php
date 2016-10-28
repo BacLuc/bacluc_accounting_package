@@ -1,5 +1,5 @@
 <?php
-namespace Concrete\Package\BaclucAccountingPackage\Block\BaclucMoveBlock;
+namespace Concrete\Package\BaclucAccountingPackage\Block\BaclucBalanceBlock;
 
 use Concrete\Core\Package\Package;
 use Concrete\Package\BaclucAccountingPackage\Src\Account;
@@ -26,18 +26,20 @@ use Concrete\Package\BasicTablePackage\Block\BasicTableBlockPackaged\Test as Tes
 
 class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlockPackaged\Controller
 {
-    protected $btHandle = 'bacluc_move_block';
+    protected $btHandle = 'bacluc_balance_block';
     /**
      * table title
      * @var string
      */
-    protected $header = "BaclucMoveBlock";
+    protected $header = "BaclucBalanceBlock";
 
     /**
      * Array of \Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption
      * @var array
      */
-    protected $requiredOptions = array();
+    protected $requiredOptions = array(
+
+    );
 
     /**
      * @var \Concrete\Package\BasicTablePackage\Src\BaseEntity
