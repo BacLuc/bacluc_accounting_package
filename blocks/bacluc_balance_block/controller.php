@@ -221,7 +221,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         if(count($accounts)>0) {
             foreach ($accounts as $key => $value) {
                 if ($value < 0) {
-                    $creditors[$key] = $value;
+                    $creditors[$key] = (-1)*$value;
                 }
             }
         }
