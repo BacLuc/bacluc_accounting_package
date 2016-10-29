@@ -225,4 +225,26 @@ class Account extends BaseEntity
         return 0;
     }
 
+    public function getBalanceBetweenDates(\DateTime $startdate, \DateTime $enddate){
+        if(count($this->MoveLines)>0){
+            $totalDebit = 0;
+            $totalCredit = 0;
+            foreach($this->MoveLines as $moveLine){
+                /**
+                 * @var MoveLine $moveLine
+                 */
+                if($moveLine->get("date_posted")>=$startdate
+                    && $moveLine->get("date_posted")<=$enddate){
+
+                    $totalDebit += $moveLine->get("debit");
+                    $totalCredit += $moveLine->get("credit");
+                }
+
+            }
+
+            return $totalDebit-$totalCredit;
+        }
+        return 0;
+    }
+
 }

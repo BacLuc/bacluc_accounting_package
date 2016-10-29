@@ -108,7 +108,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
      */
     public function getBlockTypeName()
     {
-        return t("BaclucMoveBlock");
+        return t("Bacluc Move");
     }
 
     public function action_save_row()

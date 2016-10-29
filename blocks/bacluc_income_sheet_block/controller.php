@@ -1,5 +1,5 @@
 <?php
-namespace Concrete\Package\BaclucAccountingPackage\Block\BaclucBalanceBlock;
+namespace Concrete\Package\BaclucAccountingPackage\Block\BaclucIncomeSheetBlock;
 
 use Concrete\Core\Form\Service\Widget\DateTime;
 use Concrete\Core\Package\Package;
@@ -15,9 +15,7 @@ use Concrete\Package\BasicTablePackage\Src\ExampleBaseEntity;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 use Core;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\CanEditOption;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\ORM\Query\ParameterTypeInferer;
 use OAuth\Common\Exception\Exception;
 use Page;
 use User;
@@ -30,12 +28,12 @@ use Concrete\Package\BasicTablePackage\Block\BasicTableBlockPackaged\Test as Tes
 
 class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlockPackaged\Controller
 {
-    protected $btHandle = 'bacluc_balance_block';
+    protected $btHandle = 'bacluc_income_sheet_block';
     /**
      * table title
      * @var string
      */
-    protected $header = "BaclucBalanceBlock";
+    protected $header = "BaclucIncomeSheetBlock";
 
     /**
      * Array of \Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption
@@ -57,16 +55,20 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
 
     /**
-     * @var array (accountname => accountbalance)
+     * @var Account[]
      */
     protected $accounts = array();
 
 
     /**
-     * @var string
-     * year with 4 digits
+     * @var DateTime
      */
-    protected $year;
+    protected $startdate;
+
+    /**
+     * @var DateTime
+     */
+    protected $enddate;
 
     /**
      *
@@ -90,37 +92,26 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
             $this->basicTableInstance = $bt;
         }
+        $this->loadRange();
 
 
-        //read date from session if exists
-        $sessionyear = $_SESSION[$this->getHTMLId() . "year"];
+        /*
+         * add blockoptions here if you wish
+                $this->requiredOptions = array(
+                    new TextBlockOption(),
+                    new DropdownBlockOption(),
+                    new CanEditOption()
+                );
 
-        if(strlen($sessionyear)==0){
+                $this->requiredOptions[0]->set('optionName', "Test");
+                $this->requiredOptions[1]->set('optionName', "TestDropDown");
+                $this->requiredOptions[1]->setPossibleValues(array(
+                    "test",
+                    "test2"
+                ));
 
-            $date = new \DateTime();
-            $this->year = $date->format("Y");
-        }else{
-            $this->year = $sessionyear;
-        }
-
-
-/*
- * add blockoptions here if you wish
-        $this->requiredOptions = array(
-            new TextBlockOption(),
-            new DropdownBlockOption(),
-            new CanEditOption()
-        );
-
-        $this->requiredOptions[0]->set('optionName', "Test");
-        $this->requiredOptions[1]->set('optionName', "TestDropDown");
-        $this->requiredOptions[1]->setPossibleValues(array(
-            "test",
-            "test2"
-        ));
-
-        $this->requiredOptions[2]->set('optionName', "testlink");
-*/
+                $this->requiredOptions[2]->set('optionName', "testlink");
+        */
 
 
     }
@@ -132,7 +123,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
      */
     public function getBlockTypeDescription()
     {
-        return t("Show Balance");
+        return t("Show Income Sheet");
     }
 
     /**
@@ -140,7 +131,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
      */
     public function getBlockTypeName()
     {
-        return t("BaclucBalanceBlock");
+        return t("Bacluc Income Sheet");
     }
 
     //override all the old methods action methods to just show the block
@@ -178,8 +169,10 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
     }
 
 
-
-    public function getAccountsAndBalances(){
+    /**
+     * @return \Concrete\Package\BaclucAccountingPackage\Src\Account[]
+     */
+    public function getAccounts(){
 
         if(count($this->accounts)>0){
             return $this->accounts;
@@ -189,51 +182,66 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
 
         $query =$accountBlock->getBuildQueryWithJoinedAssociations();
-        $query->where($query->expr()->in("e0.type",":types"))
-            ->setParameter(":types",array(Account::TYPE_PAYABLE));
         $modelList = $query->getQuery()->getResult();
-        $this->accounts = $modelList;
+
+        $enddate = new \DateTime($this->year."-12-31");
+        if(count($modelList)>0){
+                foreach($modelList as $account){
+                    /**
+                     * @var Account $account
+                     */
+                    $this->accounts[$account->get("name")] = $account->getBalanceUntilDate($enddate);
+                }
+        }
 
         return $this->accounts;
     }
 
-    function getDebitors(){
-        $accounts = $this->getAccountsAndBalances();
-        $debitors = array();
+    /**
+     * @return array
+     */
+    function getRevenues(){
+        $accounts = $this->getAccounts();
+        $revenues = array();
          if (count($accounts)>0) {
              foreach ($accounts as $key => $value) {
-                 if ($value >= 0) {
-                     $debitors[$key] = $value;
+                 if ($value->get("type") == Account::TYPE_RECIEVABLE) {
+                     $revenues[$key] = $value->getBalanceBetweenDates($this->startdate,$this->enddate);
                  }
              }
          }
-        return $debitors;
+        return $revenues;
     }
 
-    function getCreditors(){
-        $accounts = $this->getAccountsAndBalances();
-        $creditors = array();
-        if(count($accounts)>0) {
+    function getExpenses(){
+        $accounts = $this->getAccounts();
+        $expenses = array();
+        if (count($accounts)>0) {
             foreach ($accounts as $key => $value) {
-                if ($value < 0) {
-                    $creditors[$key] = (-1)*$value;
+                if ($value->get("type") == Account::TYPE_PAYABLE) {
+                    $expenses[$key] = $value->getBalanceBetweenDates($this->startdate,$this->enddate);
                 }
             }
         }
-        return $creditors;
+        return $expenses;
     }
 
     public function view(){
-        $this->set("debitors", $this->getDebitors());
-        $this->set("creditors", $this->getCreditors());
-        $dateField = new DateField("dummy", "Choose year", "date");
-        $dateField->setSQLValue(new \DateTime($this->year."-12-31"));
-        $this->set("dateField", $dateField);
+        $this->set("revenues", $this->getRevenues());
+        $this->set("expenses", $this->getExpenses());
+
+        $startDateField = new DateField("dummy", "Choose startdate", "startdate");
+        $startDateField->setSQLValue($this->startdate);
+        $this->set("startDateField", $startDateField);
+        $endDateField = new DateField("dummy", "Choose enddate", "enddate");
+        $endDateField->setSQLValue($this->enddate);
+        $this->set("endDateField", $endDateField);
+
         $this->set("htmlid", $this->getHTMLId());
         $this->set("header", $this->getHeader());
     }
 
-    public function action_set_date(){
+    public function action_set_range(){
         $u = new User();
 
 
@@ -267,20 +275,64 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
             $ip = ($ip === false) ? ('') : ($ip->getIp($ip::FORMAT_IP_STRING));
             $v = array();
 
-            if(isset($_POST['date'])){
+            $startdateset = false;
+            if(isset($_POST['startdate'])){
                 $dateField = new DateField("dummy", "dummy", "dummy");
-                if($dateField->validatePost($_POST['date'])){
+                if($dateField->validatePost($_POST['startdate'])){
                     $newdate = $dateField->getSQLValue();
-                    $this->year = $newdate->format("Y");
-                     $_SESSION[$this->getHTMLId() . "year"] = $this->year;
+                    $this->startdate = $newdate;
+                     $_SESSION[$this->getHTMLId() . "startdate"] = $this->startdate->format("Y-m-d");
+                    $startdateset = true;
                 }
             }
+            if(isset($_POST['enddate'])){
+                $dateField = new DateField("dummy", "dummy", "dummy");
+                if($dateField->validatePost($_POST['enddate'])){
+                    $newdate = $dateField->getSQLValue();
 
+                    if($startdateset){
+                        if($this->startdate < $newdate){
+                            $this->enddate = $newdate;
+                            $_SESSION[$this->getHTMLId() . "enddate"] = $this->enddate->format("Y-m-d");
+                        }else{
+                            //display error
+                        }
+                    }else{
+                        $_SESSION[$this->getHTMLId() . "enddate"] = $this->enddate->format("Y-m-d");
+                    }
 
+                }
+            }
         }
 
         //at the end, anyway show same page again
         $this->action_save_row();
+    }
+
+    public function loadRange()
+    {
+//read date from session if exists
+        $sessionstartdate = $_SESSION[$this->getHTMLId() . "startdate"];
+        $sessionenddate = $_SESSION[$this->getHTMLId() . "enddate"];
+
+        if (strlen($sessionstartdate) == 0 && strlen($sessionenddate) == 0) {
+
+            $date = new \DateTime();
+            $this->startdate = new DateTime($date->format("Y") . "-01-01");
+            $this->enddate = new DateTime($date->format("Y") . "-12-31");
+        } elseif (strlen($sessionstartdate) > 0 && strlen($sessionenddate) == 0) {
+            $this->startdate = new DateTime($sessionstartdate);
+            $this->enddate = new DateTime($this->startdate->format("Y") . "-12-31");
+        } elseif (strlen($sessionstartdate) == 0 && strlen($sessionenddate) > 0) {
+            $this->enddate = new DateTime($sessionenddate);
+            $this->startdate = new DateTime($this->enddate->format("Y") . "-01-01");
+        } else {
+            $this->startdate = new DateTime($sessionstartdate);
+            $this->enddate = new DateTime($sessionenddate);
+        }
+
+
+
     }
 
 }

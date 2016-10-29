@@ -107,7 +107,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
      */
     public function getBlockTypeName()
     {
-        return t("BaclucAccountBlock");
+        return t("Bacluc Account");
     }
 
 }
