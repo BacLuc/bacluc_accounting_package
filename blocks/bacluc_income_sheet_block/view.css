@@ -1,12 +1,12 @@
-.bacluc-balance-block .total-amount-cell {
+.bacluc-income-sheet-block .total-amount-cell {
     border-top: 1px solid black;
 }
 
-.bacluc-balance-block .total-row{
+.bacluc-income-sheet-block .total-row{
     margin-top: 10px;
 }
 
-.bacluc-balance-block .total-row.absolute-total{
+.bacluc-income-sheet-block .total-row.absolute-total{
     position:absolute;
     width:100%;
     bottom:0;
@@ -14,11 +14,15 @@
 
 
 
-.bacluc-balance-block .total-row span.total{
+.bacluc-income-sheet-block .total-row span.total{
     font-weight: bold;
 }
 
-.balancerow span.number {
+.bacluc-income-sheet-block .sumrow{
+    margin-top:50px;
+}
+
+.bacluc-income-sheet-block .balancerow span.number {
     position: absolute;
     right: 0;
 }

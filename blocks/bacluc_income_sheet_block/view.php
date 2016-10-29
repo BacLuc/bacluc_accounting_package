@@ -5,34 +5,52 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
  */
 ?>
 
-<div class="row bacluc-balance-block" id="<?php echo $htmlid;?>" >
+<div class="row bacluc-income-sheet-block" id="<?php echo $htmlid;?>" >
     <div class="col-xs-12">
         <div class="row">
-            <div class="col-xs-6 col-sm-4 col-md-2 ">
-                <?php echo t("Balance until Date:");?>
+            <div class="col-xs-6 col-sm-4 ">
+                <?php echo t("Income Sheet between:");?>
 
             </div>
-            <div class="col-xs-6 col-sm-4 col-md-2 ">
-                <?php echo $dateField->getTableView();?>
+            <div class="col-xs-6 col-sm-4 ">
+                <?php
+                echo t("%s and %s",$startDateField->getTableView(),$endDateField->getTableView());
+                ?>
 
             </div>
         </div>
-        <form action="<?php echo $this->action('set_date') ;?>" method="POST">
+        <form action="<?php echo $this->action('set_range') ;?>" method="POST">
         <div class="row">
+                <div class = "col-xs-12 col-md-5">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-4 ">
+                            <?php echo $startDateField->getLabel();?>
 
-            <div class="col-xs-6 col-sm-4 col-md-2 ">
-                <?php echo $dateField->getLabel();?>
+                        </div>
 
+                        <div class="col-xs-6 col-sm-4">
+                            <?php echo $startDateField->getInputHtml($form, true);?>
+
+                        </div>
+                    </div>
+                </div>
+            <div class = "col-xs-12 col-md-5">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-4 ">
+                        <?php echo $endDateField->getLabel();?>
+
+                    </div>
+
+                    <div class="col-xs-6 col-sm-4">
+                        <?php echo $endDateField->getInputHtml($form, true);?>
+
+                    </div>
+                </div>
             </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 ">
+                    <?php echo $form->submit('submit', t("set Year"));?>
 
-            <div class="col-xs-6 col-sm-4 col-md-2 ">
-                <?php echo $dateField->getInputHtml($form, true);?>
-
-            </div>
-            <div class="col-xs-6 col-sm-4 col-md-2 ">
-                <?php echo $form->submit('submit', t("set Year"));?>
-
-            </div>
+                </div>
 
         </div>
          </form>
@@ -42,16 +60,16 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
                 <div class="row">
                     <div class="col-xs-12">
 
-                        <h3 class="balance-title"><?php echo t("Debit")?></h3>
+                        <h3 class="balance-title"><?php echo t("Revenue")?></h3>
                     </div>
 
                 </div>
                 <?php
 
-                $total = 0;
-                if(count($debitors)>0){
-                    foreach($debitors as $name => $amount){
-                        $total += $amount;
+                $totalRevenue = 0;
+                if(count($revenues)>0){
+                    foreach($revenues as $name => $amount){
+                        $totalRevenue += $amount;
                         $amount = number_format($amount,2);
                         print(" 
                         <div class='row'>
@@ -73,10 +91,10 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 
                 <div class="row total-row">
                     <div class='col-xs-6 total-name-cell'>
-                        <span class='total total-name'><?php echo t("Total debit") ?></span>
+                        <span class='total total-name'><?php echo t("Total revenue") ?></span>
                     </div>
                     <div class='col-xs-6 total-amount-cell'>
-                        <span class='total total-amount number'><?php echo number_format($total,2); ?></span>
+                        <span class='total total-amount number'><?php echo number_format($totalRevenue,2); ?></span>
                     </div>
 
 
@@ -92,16 +110,16 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
                 <div class="row">
                     <div class="col-xs-12">
 
-                        <h3 class="balance-title"><?php echo t("Credit")?></h3>
+                        <h3 class="balance-title"><?php echo t("Expenses")?></h3>
                     </div>
 
                 </div>
                 <?php
 
-                $total = 0;
-                if(count($creditors)>0){
-                    foreach($creditors as $name => $amount){
-                        $total += $amount;
+                $totalExpenses = 0;
+                if(count($expenses)>0){
+                    foreach($expenses as $name => $amount){
+                        $totalExpenses += $amount;
                         $amount = number_format($amount,2);
                         print(" 
                         <div class='row'>
@@ -122,10 +140,10 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 
                 <div class="row total-row">
                     <div class='col-xs-6 total-name-cell'>
-                        <span class='total total-name'><?php echo t("Total credit") ?></span>
+                        <span class='total total-name'><?php echo t("Total expenses") ?></span>
                     </div>
                     <div class='col-xs-6 total-amount-cell'>
-                        <span class='total total-amount number'><?php echo number_format($total,2); ?></span>
+                        <span class='total total-amount number'><?php echo number_format($totalExpenses,2); ?></span>
                     </div>
 
 
@@ -135,6 +153,40 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
             </div>
 
         </div>
+        <div class="row sumrow">
+            <div class="col-xs-12 col-md-6 balancerow">
+                <div class="row">
+                    <div class='col-xs-6'>
+                        <span class='total total-name'><?php echo t("Total revenue") ?></span>
+                    </div>
+                    <div class='col-xs-6 '>
+                        <span class='total total-amount number'><?php echo number_format($totalRevenue,2); ?></span>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class='col-xs-6 '>
+                        <span class='total total-name'><?php echo t("Total expenses") ?></span>
+                    </div>
+                    <div class='col-xs-6 '>
+                        <span class='total total-amount number'>-<?php echo number_format($totalExpenses,2); ?></span>
+                    </div>
+
+                </div>
+                <div class="row total-row">
+                    <div class='col-xs-6 '>
+                        <span class='total total-name'><?php echo t("Total income") ?></span>
+                    </div>
+                    <div class='col-xs-6 total-amount-cell'>
+                        <span class='total total-amount number'><?php echo number_format(($totalRevenue-$totalExpenses),2); ?></span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
 
 
 

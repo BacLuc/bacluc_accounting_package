@@ -15,9 +15,7 @@ use Concrete\Package\BasicTablePackage\Src\ExampleBaseEntity;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 use Core;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\CanEditOption;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\ORM\Query\ParameterTypeInferer;
 use OAuth\Common\Exception\Exception;
 use Page;
 use User;
@@ -189,10 +187,17 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
 
         $query =$accountBlock->getBuildQueryWithJoinedAssociations();
-        $query->where($query->expr()->in("e0.type",":types"))
-            ->setParameter(":types",array(Account::TYPE_PAYABLE));
         $modelList = $query->getQuery()->getResult();
-        $this->accounts = $modelList;
+
+        $enddate = new \DateTime($this->year."-12-31");
+        if(count($modelList)>0){
+                foreach($modelList as $account){
+                    /**
+                     * @var Account $account
+                     */
+                    $this->accounts[$account->get("name")] = $account->getBalanceUntilDate($enddate);
+                }
+        }
 
         return $this->accounts;
     }

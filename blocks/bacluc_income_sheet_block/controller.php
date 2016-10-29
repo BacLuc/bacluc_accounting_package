@@ -61,12 +61,12 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $startdate;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $enddate;
 
@@ -169,9 +169,6 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
     }
 
 
-    /**
-     * @return \Concrete\Package\BaclucAccountingPackage\Src\Account[]
-     */
     public function getAccounts(){
 
         if(count($this->accounts)>0){
@@ -182,20 +179,15 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
 
         $query =$accountBlock->getBuildQueryWithJoinedAssociations();
+        $query->where($query->expr()->in("e0.type",":types"))
+            ->setParameter(":types",array(Account::TYPE_PAYABLE, Account::TYPE_RECIEVABLE));
         $modelList = $query->getQuery()->getResult();
-
-        $enddate = new \DateTime($this->year."-12-31");
-        if(count($modelList)>0){
-                foreach($modelList as $account){
-                    /**
-                     * @var Account $account
-                     */
-                    $this->accounts[$account->get("name")] = $account->getBalanceUntilDate($enddate);
-                }
-        }
+        $this->accounts = $modelList;
 
         return $this->accounts;
     }
+
+
 
     /**
      * @return array
@@ -206,7 +198,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
          if (count($accounts)>0) {
              foreach ($accounts as $key => $value) {
                  if ($value->get("type") == Account::TYPE_RECIEVABLE) {
-                     $revenues[$key] = $value->getBalanceBetweenDates($this->startdate,$this->enddate);
+                     $revenues[$value->get("name")] = (-1)*$value->getBalanceBetweenDates($this->startdate,$this->enddate);
                  }
              }
          }
@@ -219,7 +211,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         if (count($accounts)>0) {
             foreach ($accounts as $key => $value) {
                 if ($value->get("type") == Account::TYPE_PAYABLE) {
-                    $expenses[$key] = $value->getBalanceBetweenDates($this->startdate,$this->enddate);
+                    $expenses[$value->get("name")] = $value->getBalanceBetweenDates($this->startdate,$this->enddate);
                 }
             }
         }
@@ -318,17 +310,17 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         if (strlen($sessionstartdate) == 0 && strlen($sessionenddate) == 0) {
 
             $date = new \DateTime();
-            $this->startdate = new DateTime($date->format("Y") . "-01-01");
-            $this->enddate = new DateTime($date->format("Y") . "-12-31");
+            $this->startdate = new \DateTime($date->format("Y") . "-01-01");
+            $this->enddate = new  \DateTime($date->format("Y") . "-12-31");
         } elseif (strlen($sessionstartdate) > 0 && strlen($sessionenddate) == 0) {
-            $this->startdate = new DateTime($sessionstartdate);
-            $this->enddate = new DateTime($this->startdate->format("Y") . "-12-31");
+            $this->startdate = new  \DateTime($sessionstartdate);
+            $this->enddate = new  \DateTime($this->startdate->format("Y") . "-12-31");
         } elseif (strlen($sessionstartdate) == 0 && strlen($sessionenddate) > 0) {
-            $this->enddate = new DateTime($sessionenddate);
-            $this->startdate = new DateTime($this->enddate->format("Y") . "-01-01");
+            $this->enddate = new  \DateTime($sessionenddate);
+            $this->startdate = new  \DateTime($this->enddate->format("Y") . "-01-01");
         } else {
-            $this->startdate = new DateTime($sessionstartdate);
-            $this->enddate = new DateTime($sessionenddate);
+            $this->startdate = new  \DateTime($sessionstartdate);
+            $this->enddate = new  \DateTime($sessionenddate);
         }
 
 
