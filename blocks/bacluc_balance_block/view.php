@@ -40,9 +40,9 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
         <div class="row">
             <div class="col-xs-12 col-md-6 balancerow debitors">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="col-xs-12">
 
-                        <h3 class="balance-title"><?php echo t("Debitors")?></h3>
+                        <h3 class="balance-title"><?php echo t("Debit")?></h3>
                     </div>
 
                 </div>
@@ -73,7 +73,7 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 
                 <div class="row total-row">
                     <div class='col-xs-6 total-name-cell'>
-                        <span class='total total-name'><?php echo t("Total Debitors") ?></span>
+                        <span class='total total-name'><?php echo t("Total debit") ?></span>
                     </div>
                     <div class='col-xs-6 total-amount-cell'>
                         <span class='total total-amount number'><?php echo number_format($total,2); ?></span>
@@ -90,9 +90,9 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 
             <div class="col-xs-12 col-md-6 balancerow creditors">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="col-xs-12">
 
-                        <h3 class="balance-title"><?php echo t("Creditors")?></h3>
+                        <h3 class="balance-title"><?php echo t("Credit")?></h3>
                     </div>
 
                 </div>
@@ -122,7 +122,7 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 
                 <div class="row total-row">
                     <div class='col-xs-6 total-name-cell'>
-                        <span class='total total-name'><?php echo t("Total Creditors") ?></span>
+                        <span class='total total-name'><?php echo t("Total credit") ?></span>
                     </div>
                     <div class='col-xs-6 total-amount-cell'>
                         <span class='total total-amount number'><?php echo number_format($total,2); ?></span>
