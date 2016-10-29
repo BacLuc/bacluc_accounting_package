@@ -111,6 +111,7 @@ class Account extends BaseEntity
         $this->fieldTypes['debit']->setShowInForm(false);
         $this->fieldTypes['credit']->setShowInForm(false);
         $this->fieldTypes['balance']->setShowInForm(false);
+        $this->fieldTypes['MoveLines']->setShowInForm(false);
 
         $this->fieldTypes['type']=new DropdownField('type', 'Type', 'posttype');
         $refl = new \ReflectionClass($this);
