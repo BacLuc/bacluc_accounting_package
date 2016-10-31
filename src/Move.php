@@ -87,6 +87,10 @@ class Move extends BaseEntity
     public function __construct(){
         parent::__construct();
 
+        if($this->MoveLines == null){
+            $this->MoveLines = new ArrayCollection();
+        }
+
         $this->setDefaultFieldTypes();
     }
     public function setDefaultFieldTypes(){
