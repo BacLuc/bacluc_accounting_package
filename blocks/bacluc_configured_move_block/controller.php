@@ -275,4 +275,9 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         return $string;
     }
 
+    public function view(){
+        $options = $this->getBlockOptions();
+        $this->set("transactionName", $options[0]->getValue());
+    }
+
 }
