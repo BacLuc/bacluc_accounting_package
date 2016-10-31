@@ -197,7 +197,8 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $Move->set("date_posted",$v['formDate']);
 //        $fields['formFromAccount']
 
-        $account = $this->requiredOptions[1]->getValue();
+        $options = $this->getBlockOptions();
+        $account = $options[1]->getValue();
         $Accounts['from']=BaseEntity::getBaseEntityFromProxy($account);
         $MoveLines[0] = new MoveLine();
         $MoveLines[0]->set("Account",$Accounts['from'] );
@@ -212,7 +213,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $MoveLines[0]->set("reconciled",0);
 
 
-        $account = $this->requiredOptions[1]->getValue();
+        $account = $options[2]->getValue();
         $Accounts['to']=BaseEntity::getBaseEntityFromProxy($account);
         $MoveLines[1] = new MoveLine();
         $MoveLines[1]->set("Account",$Accounts['to'] );
