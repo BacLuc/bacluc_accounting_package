@@ -74,6 +74,7 @@ class Controller extends Package
             BlockType::installBlockType("bacluc_balance_block", $pkg);
             BlockType::installBlockType("bacluc_income_sheet_block", $pkg);
             BlockType::installBlockType("bacluc_easy_move_block", $pkg);
+            BlockType::installBlockType("bacluc_configured_move_block", $pkg);
             $em->getConnection()->commit();
         }catch(Exception $e){
             $em->getConnection()->rollBack();

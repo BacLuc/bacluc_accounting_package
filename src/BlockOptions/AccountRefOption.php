@@ -1,5 +1,6 @@
 <?php
 namespace Concrete\Package\BaclucAccountingPackage\Src\BlockOptions;
+use Concrete\Package\BaclucAccountingPackage\Src\Account;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Doctrine\ORM\Mapping;
@@ -30,14 +31,13 @@ class AccountRefOption extends TableBlockOption{
     protected $optionType =__CLASS__;
 
     /**
-     * var ArrayCollection of Group
-     * ManyToOne(targetEntity="Concrete\Package\BasicAccountingPackage\Src\Account")
+     * @var Account
+     * @ManyToOne(targetEntity="Concrete\Package\BaclucAccountingPackage\Src\Account")
 
      */
-    protected $AccountAssociations;
+    protected $Account;
     public function __construct()
     {
-        $this->AccountAssociations = new ArrayCollection();
         $this->optionType == __CLASS__;
         $this->setDefaultFieldTypes();
     }
@@ -45,46 +45,21 @@ class AccountRefOption extends TableBlockOption{
         return t('Which Accounts are used in this Block?');
     }
     public function getFieldType(){
-        if($this->fieldTypes['optionValue']==null){
+        if($this->fieldTypes['Account']==null){
             $this->setDefaultFieldTypes();
         }
         if($this->optionName != null){
-            $this->fieldTypes['AccountAssociations']->setLabel($this->optionName);
-            $this->fieldTypes['AccountAssociations']->setPostName(str_replace(" ", "", $this->optionName));
+            $this->fieldTypes['Account']->setLabel($this->optionName);
+            $this->fieldTypes['Account']->setPostName(str_replace(" ", "", $this->optionName));
         }
-        return $this->fieldTypes['AccountAssociations'];
+        return $this->fieldTypes['Account'];
     }
     public function getValue(){
-        if($this->AccountAssociations instanceof PersistentCollection){
-            $this->AccountAssociations = new ArrayCollection($this->AccountAssociations->toArray());
-        }
-        return $this->AccountAssociations;
+
+        return $this->Account;
     }
-    public function setValue($AccountAssociations){
-        if($AccountAssociations instanceof PersistentCollection){
-            $AccountAssociations = new ArrayCollection($AccountAssociations->toArray());
-        }
-        if($AccountAssociations instanceof  Entity){
-
-            $idfieldname =$AccountAssociations->getIdFieldName();
-            $optionValue = $this->getEntityManager()
-                ->getRepository($AccountAssociations::getFullClassName())
-                ->findOne(array(
-                    $AccountAssociations->getIdFieldName() => $AccountAssociations->$idfieldname
-                ));
-        }elseif($AccountAssociations instanceof ArrayCollection){
-
-            foreach($this->AccountAssociations->toArray() as $key => $value){
-                $this->AccountAssociations->removeElement($value);
-                $this->getEntityManager()->remove($value);
-            }
-            foreach($AccountAssociations->toArray() as $key => $value){
-                $idfieldname =$value->getIdFieldName();
-                $this->getEntityManager()->persist($value);
-                $this->AccountAssociations->add($value);
-            }
-
-        }
+    public function setValue($Account){
+        $this->Account = $Account;
 
 
 

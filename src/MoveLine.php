@@ -40,7 +40,7 @@ use Concrete\Core\Package\Package;
  * Package  Concrete\Package\BaclucAccountingPackage\Src
  *  @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\Move")
+ * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\MoveLine")
  * @Entity
 @Table(name="bacluc_move_line"
 )
