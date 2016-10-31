@@ -67,20 +67,11 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         //$this->model has to be instantiated before, that session handling works right
 
         $this->model = new Move();
-        parent::__construct($obj);
 
 
-
-        if ($obj instanceof Block) {
-         $bt = $this->getEntityManager()->getRepository('\Concrete\Package\BasicTablePackage\Src\BasicTableInstance')->findOneBy(array('bID' => $obj->getBlockID()));
-
-            $this->basicTableInstance = $bt;
-        }
-
-
-/*
- * add blockoptions here if you wish
- * */
+        /*
+         * add blockoptions here if you wish
+         * */
         $this->requiredOptions = array(
             new TextBlockOption(),
             new AccountRefOption(),
@@ -92,6 +83,18 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
 
         $this->requiredOptions[2]->set('optionName', "To Account");
+
+        parent::__construct($obj);
+
+
+
+        if ($obj instanceof Block) {
+         $bt = $this->getEntityManager()->getRepository('\Concrete\Package\BasicTablePackage\Src\BasicTableInstance')->findOneBy(array('bID' => $obj->getBlockID()));
+
+            $this->basicTableInstance = $bt;
+        }
+
+
 
 
     }

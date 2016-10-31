@@ -55,13 +55,23 @@ class AccountRefOption extends TableBlockOption{
         return $this->fieldTypes['Account'];
     }
     public function getValue(){
+        if($this->Account == null){
+            if($this->getId()!= null){
+                $query = self::getBuildQueryWithJoinedAssociations(get_class($this));
+                $query->where($query->expr()->eq("e0.".$this->getIdFieldName(),":id"));
+                $query->setParameter(":id", $this->getId());
+                $result = $query->getQuery()->getSingleResult();
+                $this->Account = $result->get("Account");
+            }
+        }
 
         return $this->Account;
     }
+
+
     public function setValue($Account){
         $this->Account = $Account;
-
-
-
     }
+
+
 }
