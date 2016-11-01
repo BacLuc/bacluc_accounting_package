@@ -37,7 +37,7 @@ use Doctrine\ORM\Mapping\Table;
  * Package  Concrete\Package\BaclucAccountingPackage\Src
  *  @InheritanceType("JOINED")
  * @DiscriminatorColumn(name="discr", type="string")
- * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\MoveLine")
+ * @DiscriminatorEntry(value="Concrete\Package\BaclucAccountingPackage\Src\Move")
  * @Entity
 @Table(name="bacluc_move"
 )
@@ -86,6 +86,10 @@ class Move extends BaseEntity
 
     public function __construct(){
         parent::__construct();
+
+        if($this->MoveLines == null){
+            $this->MoveLines = new ArrayCollection();
+        }
 
         $this->setDefaultFieldTypes();
     }

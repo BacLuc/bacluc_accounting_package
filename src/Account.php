@@ -111,6 +111,7 @@ class Account extends BaseEntity
         $this->fieldTypes['debit']->setShowInForm(false);
         $this->fieldTypes['credit']->setShowInForm(false);
         $this->fieldTypes['balance']->setShowInForm(false);
+        $this->fieldTypes['MoveLines']->setShowInForm(false);
 
         $this->fieldTypes['type']=new DropdownField('type', 'Type', 'posttype');
         $refl = new \ReflectionClass($this);
@@ -213,6 +214,28 @@ class Account extends BaseEntity
                  * @var MoveLine $moveLine
                  */
                 if($moveLine->get("date_posted")<=$date){
+
+                    $totalDebit += $moveLine->get("debit");
+                    $totalCredit += $moveLine->get("credit");
+                }
+
+            }
+
+            return $totalDebit-$totalCredit;
+        }
+        return 0;
+    }
+
+    public function getBalanceBetweenDates(\DateTime $startdate, \DateTime $enddate){
+        if(count($this->MoveLines)>0){
+            $totalDebit = 0;
+            $totalCredit = 0;
+            foreach($this->MoveLines as $moveLine){
+                /**
+                 * @var MoveLine $moveLine
+                 */
+                if($moveLine->get("date_posted")>=$startdate
+                    && $moveLine->get("date_posted")<=$enddate){
 
                     $totalDebit += $moveLine->get("debit");
                     $totalCredit += $moveLine->get("credit");
