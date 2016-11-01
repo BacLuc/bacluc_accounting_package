@@ -19,6 +19,7 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\FloatField;
 use Core;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\CanEditOption;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\ORM\QueryBuilder;
 use OAuth\Common\Exception\Exception;
 use Page;
 use User;
@@ -278,6 +279,76 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
     public function view(){
         $options = $this->getBlockOptions();
         $this->set("transactionName", $options[0]->getValue());
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param array $queryConfig
+     * @return QueryBuilder
+     */
+    public function addFilterToQuery(QueryBuilder $query, array $queryConfig = array())
+    {
+        //first, check if entities are set right
+        $error = true;
+        if(isset($queryConfig['MoveLines'])){
+            $targetEntity = $queryConfig['MoveLines']['class'];
+            $reflection = new \ReflectionClass($targetEntity);
+            $MoveLine = new MoveLine();
+            $account1 = null;
+            $account2 = null;
+            if($reflection ->isSubclassOf(get_class($MoveLine)) || $targetEntity == get_class($MoveLine)){
+                    //check if MoveLine has still property Account
+                    if(property_exists(get_class($MoveLine),"Account")){
+                        //check if options are set
+                        $blockOptions = $this->getBlockOptions();
+                        //TODO change the numbers here
+                        $account1 = $blockOptions[1]->getValue();
+                        $account2 = $blockOptions[2]->getValue();
+                        if($account1 != null && $account2 != null){
+                            $error = false;
+                        }
+                    }
+            }
+        }
+        if($error === false){
+            /**
+             * @var QueryBuilder $query
+             */
+
+            $subquery1 = $this->getEntityManager()->createQueryBuilder();
+            $subquery2 = $this->getEntityManager()->createQueryBuilder();
+            $query->where($query->expr()->andX(
+                $query->expr()->exists(
+                        $subquery1->select("notused1")
+                        ->from($queryConfig['MoveLines']['class'], "notused1")
+                        ->leftJoin("notused1.Account", "a1")
+                        ->leftJoin("notused1.Move", "m1")
+                        ->where(
+                            $query->expr()->andX(
+                                $query->expr()->eq("a1", ":ConfiguredAccount1")
+                                ,$query->expr()->eq("m1", "e0")
+                            )
+                        )
+                )
+                ,$query->expr()->exists(
+                $subquery2->select("notused2")
+                    ->from($queryConfig['MoveLines']['class'], "notused2")
+                    ->leftJoin("notused2.Account", "a2")
+                    ->leftJoin("notused2.Move", "m2")
+                    ->where(
+                        $query->expr()->andX(
+                            $query->expr()->eq("a2", ":ConfiguredAccount2")
+                            ,$query->expr()->eq("m2", "e0")
+                        )
+                    )
+            )
+            ));
+            $query->setParameter("ConfiguredAccount1", $account1)
+                ->setParameter("ConfiguredAccount2", $account2)
+                ;
+        }
+
+       return $query;
     }
 
 }
