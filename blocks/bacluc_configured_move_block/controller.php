@@ -11,6 +11,7 @@ use Concrete\Core\Block\BlockController;
 use Concrete\Package\BasicTablePackage\Src\BasicTableInstance;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\TextBlockOption;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
+use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Concrete\Package\BasicTablePackage\Src\ExampleBaseEntity;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownField;
@@ -323,7 +324,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
             $subquery1 = $this->getEntityManager()->createQueryBuilder();
             $subquery2 = $this->getEntityManager()->createQueryBuilder();
-            $query->where($query->expr()->andX(
+            $query->andWhere($query->expr()->andX(
                 $query->expr()->exists(
                         $subquery1->select("notused1")
                         ->from($queryConfig['MoveLines']['class'], "notused1")
@@ -356,5 +357,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
        return $query;
     }
+
+
 
 }
