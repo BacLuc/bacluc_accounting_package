@@ -1,0 +1,25 @@
+.bacluc-balance-block .total-amount-cell {
+    border-top: 1px solid black;
+}
+
+.bacluc-balance-block .total-row{
+    margin-top: 10px;
+}
+
+.bacluc-balance-block .total-row.absolute-total{
+    position:absolute;
+    width:100%;
+    bottom:0;
+}
+
+
+
+.bacluc-balance-block .total-row span.total{
+    font-weight: bold;
+}
+
+.balancerow span.number {
+    position: absolute;
+    right: 0;
+}
+
