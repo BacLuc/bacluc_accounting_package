@@ -115,6 +115,12 @@ class Move extends BaseEntity
 
     }
 
+    public function setDefaultValues()
+    {
+        $this->fieldTypes['date_posted']->setDefault(new \DateTime());
+        return $this;
+    }
+
 
     /**
      * Returns the function, which generates the String for LInk Fields to identify the instance. Has to be unique to prevent errors
