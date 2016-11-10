@@ -157,7 +157,7 @@ use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField;
             <div class="col-xs-12 col-md-6 balancerow">
                 <div class="row">
                     <div class='col-xs-6'>
-                        <span class='total total-name'><?php echo t("Total revenue") ?></span>
+                        <span class='total total-name'><?php echo t("Net Income") ?></span>
                     </div>
                     <div class='col-xs-6 '>
                         <span class='total total-amount number'><?php echo number_format($totalRevenue,2); ?></span>

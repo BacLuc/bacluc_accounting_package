@@ -110,26 +110,6 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         return t("Bacluc Account");
     }
 
-    public static function checkAccountsConsistency()
-    {
-        $pkg = Package::getByHandle("basic_table_package");
-        $em = $pkg->getEntityManager();
-//get all accounts and check their consistency
-        $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
 
-        $query = $accountBlock->getBuildQueryWithJoinedAssociations();
-        $modelList = $query->getQuery()->getResult();
-        if (count($modelList) > 0) {
-            /**
-             * @var Account $account
-             */
-            foreach ($modelList as $key => $account) {
-                $account->checkConsistency();
-                $em->persist($account);
-
-            }
-        }
-        $em->flush();
-    }
 
 }
