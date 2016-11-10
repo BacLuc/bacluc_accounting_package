@@ -23,6 +23,7 @@ use Doctrine\ORM\Query\Expr;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DropdownLinkField;
 use Concrete\Package\BaclucPersonPackage\Src\Address;
 use Concrete\Package\BaclucPersonPackage\Src\PostalAddress;
+use Concrete\Core\Package\Package;
 
 
 /*because of the hack with @DiscriminatorEntry Annotation, all Doctrine Annotations need to be
@@ -246,6 +247,28 @@ class Account extends BaseEntity
             return $totalDebit-$totalCredit;
         }
         return 0;
+    }
+
+    public static function checkAccountsConsistency()
+    {
+        $pkg = Package::getByHandle("basic_table_package");
+        $em = $pkg->getEntityManager();
+//get all accounts and check their consistency
+        $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
+
+        $query = $accountBlock->getBuildQueryWithJoinedAssociations();
+        $modelList = $query->getQuery()->getResult();
+        if (count($modelList) > 0) {
+            /**
+             * @var Account $account
+             */
+            foreach ($modelList as $key => $account) {
+                $account->checkConsistency();
+                $em->persist($account);
+
+            }
+        }
+        $em->flush();
     }
 
 }

@@ -112,7 +112,15 @@ class MoveLine extends BaseEntity
          * @var Field[] $this->FieldTypes
          */
         $this->fieldTypes['Move']->setShowInForm(false);
+        $this->fieldTypes['credit']->setMin(0);
+        $this->fieldTypes['debit']->setMin(0);
 
+    }
+
+    public function setDefaultValues()
+    {
+        $this->fieldTypes['date_posted']->setDefault(new \DateTime());
+        return $this;
     }
 
 
