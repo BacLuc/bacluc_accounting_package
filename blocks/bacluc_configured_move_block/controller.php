@@ -1,6 +1,7 @@
 <?php
 namespace Concrete\Package\BaclucAccountingPackage\Block\BaclucConfiguredMoveBlock;
 
+use Concrete\Core\Form\Service\Widget\DateTime;
 use Concrete\Core\Package\Package;
 use Concrete\Package\BaclucAccountingPackage\Src\Account;
 use Concrete\Package\BaclucAccountingPackage\Src\MoveLine;
@@ -151,6 +152,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $fields['formStatus']->setOptions($fields['status']->getOptions());
 
         $fields['formDate'] = new DateField("formDate", "Date", "formDate");
+        $fields['formDate']->setDefault(new \DateTime());
         $fields['formDate']->setShowInTable(false);
 
 

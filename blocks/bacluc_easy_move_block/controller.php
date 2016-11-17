@@ -148,6 +148,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         $fields['formStatus']->setOptions($fields['status']->getOptions());
 
         $fields['formDate'] = new DateField("formDate", "Date", "formDate");
+        $fields['formDate']->setDefault(new \DateTime());
         $fields['formDate']->setShowInTable(false);
 
         $fields['formFromAccount']= new DropdownLinkField("formFromAccount", "From Account", "formFromAccount");
