@@ -111,6 +111,7 @@ class Move extends BaseEntity
         $MoveLines = $this->fieldTypes['MoveLines'];
         $directEditField = new DirectEditAssociatedEntityMultipleField($MoveLines->getSQLFieldName(), "Move Lines", $MoveLines->getPostName());
         DropdownLinkField::copyLinkInfo($MoveLines,$directEditField);
+        $directEditField->setAlwaysCreateNewInstance(true);
         $this->fieldTypes['MoveLines']=$directEditField;
 
     }
