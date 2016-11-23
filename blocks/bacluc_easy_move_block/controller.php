@@ -153,11 +153,11 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
         $fields['formFromAccount']= new DropdownLinkField("formFromAccount", "From Account", "formFromAccount");
         $fields['formFromAccount']->setShowInTable(false);
-        $fields['formFromAccount']->setLinkInfo(get_class(new MoveLine()), "Account",get_class(new Account()));
+        $fields['formFromAccount']->setLinkInfo(get_class(new MoveLine()), "Account", get_class(new Account()), null);
 
         $fields['formToAccount']= new DropdownLinkField("formToAccount", "To Account", "formToAccount");
         $fields['formToAccount']->setShowInTable(false);
-        $fields['formToAccount']->setLinkInfo(get_class(new MoveLine()), "Account",get_class(new Account()));
+        $fields['formToAccount']->setLinkInfo(get_class(new MoveLine()), "Account", get_class(new Account()), null);
 
         $fields['formAmount'] = new FloatField("formAmount", "Amount", "formAmount");
         $fields['formAmount']->setShowInTable(false);
