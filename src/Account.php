@@ -174,8 +174,7 @@ class Account extends BaseEntity
 
         }else{
             foreach($this->MoveLines->toArray() as &$MoveLine){
-                $classname = get_class($MoveLine);
-                $MoveLine = $classname::getBaseEntityFromProxy($MoveLine);
+                $MoveLine = BaseEntityRepository::getBaseEntityFromProxy($MoveLine);
                 /**
                  * @var MoveLine $MoveLine
                  */
