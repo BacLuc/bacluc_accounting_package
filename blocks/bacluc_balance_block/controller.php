@@ -144,7 +144,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
     //override all the old methods action methods to just show the block
 
-    public function action_save_row()
+    public function action_save_row($redirectOnSuccess = true)
     {
         $bo = $this->getBlockObject();
 
