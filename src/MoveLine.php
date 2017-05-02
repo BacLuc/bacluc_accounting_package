@@ -9,6 +9,7 @@ namespace Concrete\Package\BaclucAccountingPackage\Src;
 use Concrete\Flysystem\Exception;
 use Concrete\Package\BaclucAccountingPackage\Src\EntityViews\MoveLineFormView;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
+use Concrete\Package\BasicTablePackage\Src\BaseEntityRepository;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Concrete\Package\BasicTablePackage\Src\Exceptions\ConsistencyCheckException;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
@@ -140,7 +141,7 @@ class MoveLine extends BaseEntity
             }
 
             if(is_object($item->Account)){
-                $item->Account = BaseEntity::getBaseEntityFromProxy($item->Account);
+                $item->Account = BaseEntityRepository::getBaseEntityFromProxy($item->Account);
                 $accountDisplayStringFunction = Account::getDefaultGetDisplayStringFunction();
                 $returnString.= $accountDisplayStringFunction($item->Account)." ";
             }
@@ -172,7 +173,7 @@ class MoveLine extends BaseEntity
             //$errors[]="Account can not be null";
         }else{
             try{
-                $this->Account = static::getBaseEntityFromProxy($this->Account);
+                $this->Account = BaseEntityRepository::getBaseEntityFromProxy($this->Account);
                 $accountErrors = $this->Account->checkConsistency();
                 foreach($accountErrors as $key => $value){
                     $errors[]=$value;
@@ -186,7 +187,7 @@ class MoveLine extends BaseEntity
             //$errors[]="Move can not be null";
         }else{
             try{
-                $this->Move = static::getBaseEntityFromProxy($this->Move);
+                $this->Move = BaseEntityRepository::getBaseEntityFromProxy($this->Move);
                 $moveErrors = $this->Move->checkConsistency();
                 foreach($moveErrors as $key => $value){
                     $errors[]=$value;

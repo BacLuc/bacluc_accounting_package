@@ -5,6 +5,7 @@ use Concrete\Core\Form\Service\Widget\DateTime;
 use Concrete\Core\Package\Package;
 use Concrete\Package\BaclucAccountingPackage\Src\Account;
 use Concrete\Package\BaclucEventPackage\Src\Event;
+use Concrete\Package\BasicTablePackage\Src\BaseEntityRepository;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\DropdownBlockOption;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption;
 use Concrete\Core\Block\BlockController;
@@ -186,7 +187,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
         //get all accounts and check their consistency
         $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
 
-        $query =$accountBlock->getBuildQueryWithJoinedAssociations();
+        $query =BaseEntityRepository::getBuildQueryWithJoinedAssociations(get_class($accountBlock->getModel()));
         $modelList = $query->getQuery()->getResult();
 
         $enddate = new \DateTime($this->year."-12-31");

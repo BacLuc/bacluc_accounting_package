@@ -7,6 +7,7 @@
  */
 namespace Concrete\Package\BaclucAccountingPackage\Src;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
+use Concrete\Package\BasicTablePackage\Src\BaseEntityRepository;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DirectEditAssociatedEntityField;
@@ -158,7 +159,7 @@ class Move extends BaseEntity
         if(count($this->MoveLines)>0) {
             foreach ($this->MoveLines->toArray() as $moveLine) {
 
-                $moveLine = BaseEntity::getBaseEntityFromProxy($moveLine);
+                $moveLine = BaseEntityRepository::getBaseEntityFromProxy($moveLine);
                 try {
                     $moveLineErrors = $moveLine->checkConsistency();
                 } catch (ConsistencyCheckException $e) {

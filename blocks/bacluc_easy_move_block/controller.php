@@ -5,6 +5,7 @@ use Concrete\Core\Package\Package;
 use Concrete\Package\BaclucAccountingPackage\Src\Account;
 use Concrete\Package\BaclucAccountingPackage\Src\MoveLine;
 use Concrete\Package\BaclucEventPackage\Src\Event;
+use Concrete\Package\BasicTablePackage\Src\BaseEntityRepository;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\DropdownBlockOption;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption;
 use Concrete\Core\Block\BlockController;
@@ -203,7 +204,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 //        $fields['formDate']
         $Move->set("date_posted",$v['formDate']);
 //        $fields['formFromAccount']
-        $Accounts['from']=BaseEntity::getBaseEntityFromProxy($v['formFromAccount']);
+        $Accounts['from']= BaseEntityRepository::getBaseEntityFromProxy($v['formFromAccount']);
         $MoveLines[0] = new MoveLine();
         $MoveLines[0]->set("Account",$Accounts['from'] );
         $Accounts['from']->get("MoveLines")->add($MoveLines[0]);
@@ -218,7 +219,7 @@ class Controller extends \Concrete\Package\BasicTablePackage\Block\BasicTableBlo
 
 
 //        $fields['formToAccount']
-        $Accounts['to']=BaseEntity::getBaseEntityFromProxy($v['formToAccount']);
+        $Accounts['to']= BaseEntityRepository::getBaseEntityFromProxy($v['formToAccount']);
         $MoveLines[1] = new MoveLine();
         $MoveLines[1]->set("Account",$Accounts['to'] );
         $Accounts['to']->get("MoveLines")->add($MoveLines[1]);

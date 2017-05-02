@@ -1,6 +1,7 @@
 <?php
 namespace Concrete\Package\BaclucAccountingPackage\Src\BlockOptions;
 use Concrete\Package\BaclucAccountingPackage\Src\Account;
+use Concrete\Package\BasicTablePackage\Src\BaseEntityRepository;
 use Concrete\Package\BasicTablePackage\Src\BlockOptions\TableBlockOption;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Doctrine\ORM\Mapping;
@@ -57,7 +58,7 @@ class AccountRefOption extends TableBlockOption{
     public function getValue(){
         if($this->Account == null){
             if($this->getId()!= null){
-                $query = self::getBuildQueryWithJoinedAssociations(get_class($this));
+                $query = BaseEntityRepository::getBuildQueryWithJoinedAssociations(get_class($this));
                 $query->where($query->expr()->eq("e0.".$this->getIdFieldName(),":id"));
                 $query->setParameter(":id", $this->getId());
                 $result = $query->getQuery()->getSingleResult();

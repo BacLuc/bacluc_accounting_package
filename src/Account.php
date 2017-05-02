@@ -8,6 +8,7 @@
 namespace Concrete\Package\BaclucAccountingPackage\Src;
 use Concrete\Core\Html\Object\Collection;
 use Concrete\Package\BasicTablePackage\Src\BaseEntity;
+use Concrete\Package\BasicTablePackage\Src\BaseEntityRepository;
 use Concrete\Package\BasicTablePackage\Src\EntityGetterSetter;
 use Concrete\Package\BasicTablePackage\Src\Exceptions\ConsistencyCheckException;
 use Concrete\Package\BasicTablePackage\Src\FieldTypes\DateField as DateField;
@@ -142,7 +143,7 @@ class Account extends BaseEntity
      */
     public static function getDefaultGetDisplayStringFunction(){
         $function = function(Account $item){
-            $item = BaseEntity::getBaseEntityFromProxy($item);
+            $item = BaseEntityRepository::getBaseEntityFromProxy($item);
             $returnString = '';
             if(strlen($item->code) >0){
                 $returnString.= $item->code." ";
@@ -258,7 +259,7 @@ class Account extends BaseEntity
 //get all accounts and check their consistency
         $accountBlock = new \Concrete\Package\BaclucAccountingPackage\Block\BaclucAccountBlock\Controller();
 
-        $query = $accountBlock->getBuildQueryWithJoinedAssociations();
+        $query = BaseEntityRepository::getBuildQueryWithJoinedAssociations(get_class($accountBlock->getModel()));
         $modelList = $query->getQuery()->getResult();
         if (count($modelList) > 0) {
             /**
