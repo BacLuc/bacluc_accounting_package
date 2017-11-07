@@ -1,2 +1,2 @@
 <?php
-include($controller->getBasicTablePath().'/view.php');
+include($controller->getBasicTablePath() . '/view.php');

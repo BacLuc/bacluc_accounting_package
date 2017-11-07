@@ -18,12 +18,12 @@ class MoveLineFormView extends AbstractFormView
      * @param bool $clientSideValidationActivated
      * @return mixed
      */
-    public function getFormView($form, $clientSideValidationActivated = true)
+    public function getFormView ($form, $clientSideValidationActivated = true)
     {
         $variables = $this->getFilledVariables($clientSideValidationActivated);
         $html = "
     <div class='row'>
-            ".$variables['id']['input'] ."
+            " . $variables['id']['input'] . "
             <div class='row'>
                                         <div class = 'col-xs-12'>
                                             <div class='row'>
